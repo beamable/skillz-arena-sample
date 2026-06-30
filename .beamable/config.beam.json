@@ -7,9 +7,10 @@
   "additionalProjectPaths": [],
   "ignoredProjectPaths": [
     "node_modules",
-    ".git"
+    ".git",
+    "services"
   ],
   "host": "https://api.beamable.com",
   "cid": "1689160644344843",
-  "pid": "DE_85621805437202432"
+  "pid": "DE_85621827599904768"
 }
