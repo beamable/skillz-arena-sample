@@ -1,0 +1,15 @@
+{
+  "otelConfig": {
+    "BeamCliAllowTelemetry": true,
+    "BeamCliTelemetryLogLevel": "Warning",
+    "BeamCliTelemetryMaxSize": 524288000
+  },
+  "additionalProjectPaths": [],
+  "ignoredProjectPaths": [
+    "node_modules",
+    ".git"
+  ],
+  "host": "https://api.beamable.com",
+  "cid": "1689160644344843",
+  "pid": "DE_85621827599904768"
+}

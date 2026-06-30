@@ -46,8 +46,12 @@ env.local
 local.settings.json
 appsettings.Development.json
 
-# Beamable local/private state
-.beamable/
+# Beamable workspace config
+.beamable/*
+!.beamable/
+!.beamable/config.beam.json
+!.beamable/additional-project-paths.json
+!.beamable/project-paths-to-ignore.json
 beamable.local.json
 
 # Moe private repo memory
