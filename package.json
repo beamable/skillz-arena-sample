@@ -1,0 +1,13 @@
+{
+  "name": "skillz-arena-sample",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Beamable Skillz Arena sample using React Native, TypeScript, and the Beamable Web SDK.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "check": "npm ls @beamable/sdk"
+  },
+  "dependencies": {
+    "@beamable/sdk": "1.2.1"
+  }
+}
