@@ -52,6 +52,7 @@ appsettings.Development.json
 !.beamable/config.beam.json
 !.beamable/additional-project-paths.json
 !.beamable/project-paths-to-ignore.json
+.beamable/local/
 beamable.local.json
 
 # Moe private repo memory
