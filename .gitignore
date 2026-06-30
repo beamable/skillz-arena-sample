@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# React Native / Expo
+.expo/
+.expo-shared/
+dist/
+web-build/
+
+# Metro / TypeScript / test output
+.metro-cache/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# Native build output
+android/.gradle/
+android/app/build/
+android/build/
+ios/Pods/
+ios/build/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# .NET / Beamable microservice build output
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment and local config
+.env
+.env.*
+!.env.example
+local.settings.json
+appsettings.Development.json
+
+# Beamable local/private state
+.beamable/
+beamable.local.json
+
+# Moe private repo memory
+.aiMoe/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
