@@ -72,6 +72,30 @@ export class GameServiceClient extends BeamMicroServiceClient {
     });
   }
   
+  async sellLoot(params: Types.SellLootRequestArgs): Promise<Types.SellLootResponse> {
+    return this.request({
+      endpoint: "SellLoot",
+      payload: params,
+      withAuth: true
+    });
+  }
+  
+  async buyWeapon(params: Types.BuyWeaponRequestArgs): Promise<Types.BuyWeaponResponse> {
+    return this.request({
+      endpoint: "BuyWeapon",
+      payload: params,
+      withAuth: true
+    });
+  }
+  
+  async equipWeapon(params: Types.EquipWeaponRequestArgs): Promise<Types.EquipWeaponResponse> {
+    return this.request({
+      endpoint: "EquipWeapon",
+      payload: params,
+      withAuth: true
+    });
+  }
+  
   async completeQuickGame(params: Types.CompleteQuickGameRequestArgs): Promise<Types.CompleteQuickGameResponse> {
     return this.request({
       endpoint: "CompleteQuickGame",

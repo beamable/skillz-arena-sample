@@ -47,6 +47,9 @@ namespace Beamable.GameService
 		public int gameLevel;
 		public string equippedWeaponId;
 		public string startingWeaponId;
+		public long gold;
+		public MerchantLootStackResponse[] loot;
+		public MerchantOwnedWeaponResponse[] ownedWeapons;
 		public GetMerchantPlayerStateArenaProgressResponse arenaProgress;
 
 		public static GetMerchantPlayerStateResponse Invalid(string error)
@@ -57,7 +60,92 @@ namespace Beamable.GameService
 				error = error,
 				equippedWeaponId = string.Empty,
 				startingWeaponId = string.Empty,
+				loot = Array.Empty<MerchantLootStackResponse>(),
+				ownedWeapons = Array.Empty<MerchantOwnedWeaponResponse>(),
 				arenaProgress = GetMerchantPlayerStateArenaProgressResponse.Invalid(error)
+			};
+		}
+	}
+
+	[Serializable]
+	public class SellLootRequest
+	{
+		public string itemContentId;
+		public int quantity;
+	}
+
+	[Serializable]
+	public class SellLootResponse
+	{
+		public bool success;
+		public string error;
+		public string eventId;
+		public string itemContentId;
+		public int quantitySold;
+		public int goldGranted;
+		public int arenaXpAwarded;
+		public SellLootArenaProgressResponse arenaProgress;
+
+		public static SellLootResponse Invalid(string error)
+		{
+			return new SellLootResponse
+			{
+				success = false,
+				error = error,
+				eventId = string.Empty,
+				itemContentId = string.Empty,
+				arenaProgress = SellLootArenaProgressResponse.Invalid(error)
+			};
+		}
+	}
+
+	[Serializable]
+	public class BuyWeaponRequest
+	{
+		public string listingId;
+	}
+
+	[Serializable]
+	public class BuyWeaponResponse
+	{
+		public bool success;
+		public string error;
+		public string listingId;
+		public string weaponContentId;
+		public int goldSpent;
+
+		public static BuyWeaponResponse Invalid(string error)
+		{
+			return new BuyWeaponResponse
+			{
+				success = false,
+				error = error,
+				listingId = string.Empty,
+				weaponContentId = string.Empty
+			};
+		}
+	}
+
+	[Serializable]
+	public class EquipWeaponRequest
+	{
+		public string weaponContentId;
+	}
+
+	[Serializable]
+	public class EquipWeaponResponse
+	{
+		public bool success;
+		public string error;
+		public string equippedWeaponId;
+
+		public static EquipWeaponResponse Invalid(string error)
+		{
+			return new EquipWeaponResponse
+			{
+				success = false,
+				error = error,
+				equippedWeaponId = string.Empty
 			};
 		}
 	}
@@ -209,6 +297,7 @@ namespace Beamable.GameService
 		public int gameLevel;
 		public string equippedWeaponId;
 		public string startingWeaponId;
+		public long gold;
 
 		public static MerchantPlayerStateResponse Default()
 		{
@@ -217,9 +306,28 @@ namespace Beamable.GameService
 				gameXp = 0,
 				gameLevel = 1,
 				equippedWeaponId = string.Empty,
-				startingWeaponId = string.Empty
+				startingWeaponId = string.Empty,
+				gold = 0
 			};
 		}
+	}
+
+	[Serializable]
+	public class MerchantLootStackResponse
+	{
+		public string itemContentId;
+		public string inventoryContentId;
+		public int quantity;
+		public long[] instanceIds;
+	}
+
+	[Serializable]
+	public class MerchantOwnedWeaponResponse
+	{
+		public string itemContentId;
+		public string inventoryContentId;
+		public int quantity;
+		public long[] instanceIds;
 	}
 
 	[Serializable]
@@ -227,6 +335,55 @@ namespace Beamable.GameService
 	{
 		public string itemContentId;
 		public int quantity;
+	}
+
+	[Serializable]
+	public class SellLootArenaProgressResponse
+	{
+		public bool success;
+		public string error;
+		public string playerKey;
+		public int totalXp;
+		public int level;
+		public int currentLevelXp;
+		public int nextLevelXp;
+		public int xpToNextLevel;
+		public bool duplicateEvent;
+		public bool didLevelUp;
+		public int xpGranted;
+		public string lastEventId;
+		public DateTime updatedAt;
+
+		public static SellLootArenaProgressResponse Invalid(string error)
+		{
+			return new SellLootArenaProgressResponse
+			{
+				success = false,
+				error = error,
+				playerKey = string.Empty,
+				lastEventId = string.Empty
+			};
+		}
+
+		public static SellLootArenaProgressResponse FromArena(ArenaProgressResponse progress)
+		{
+			return new SellLootArenaProgressResponse
+			{
+				success = progress.success,
+				error = progress.error,
+				playerKey = progress.playerKey,
+				totalXp = progress.totalXp,
+				level = progress.level,
+				currentLevelXp = progress.currentLevelXp,
+				nextLevelXp = progress.nextLevelXp,
+				xpToNextLevel = progress.xpToNextLevel,
+				duplicateEvent = progress.duplicateEvent,
+				didLevelUp = progress.didLevelUp,
+				xpGranted = progress.xpGranted,
+				lastEventId = progress.lastEventId,
+				updatedAt = progress.updatedAt
+			};
+		}
 	}
 
 	[Serializable]

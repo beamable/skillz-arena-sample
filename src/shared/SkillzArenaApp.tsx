@@ -16,7 +16,11 @@ import { CaveEncounterScreen } from "../game/CaveEncounterScreen";
 import type { MerchantBoss, MerchantCave } from "../game/content/gameContent";
 import { defaultMerchantState } from "../game/defaultMerchantState";
 import { TownScreen } from "../game/TownScreen";
-import type { ResolveBossEncounterResponse } from "../generated/game/beamable/clients/types";
+import type {
+  GetGameArenaProgressResponse,
+  GetMerchantPlayerStateResponse,
+  ResolveBossEncounterResponse,
+} from "../generated/game/beamable/clients/types";
 import {
   clearBeamContextsOnLogout,
   getArenaBeam,
@@ -241,6 +245,59 @@ export function SkillzArenaApp() {
     }
   }
 
+  async function refreshMerchantState() {
+    const gameBeam = await withTimeout(
+      getGameBeam(),
+      15000,
+      "Game Beam context did not initialize in time.",
+    );
+    const gameClient = getRegisteredGameServiceClient(gameBeam);
+    const merchantState = await withTimeout(
+      gameClient.getMerchantPlayerState(),
+      10000,
+      "Merchant player state request timed out.",
+    );
+    setSession((currentSession) => {
+      if (!currentSession) {
+        return currentSession;
+      }
+
+      return {
+        ...currentSession,
+        merchantState,
+        arenaProgress: merchantState.arenaProgress,
+      };
+    });
+    return merchantState;
+  }
+
+  function handleMerchantStateChange(merchantState: GetMerchantPlayerStateResponse) {
+    setSession((currentSession) => {
+      if (!currentSession) {
+        return currentSession;
+      }
+
+      return {
+        ...currentSession,
+        merchantState,
+        arenaProgress: merchantState.arenaProgress,
+      };
+    });
+  }
+
+  function handleArenaProgressChange(arenaProgress: GetGameArenaProgressResponse) {
+    setSession((currentSession) => {
+      if (!currentSession) {
+        return currentSession;
+      }
+
+      return {
+        ...currentSession,
+        arenaProgress,
+      };
+    });
+  }
+
   function handleLogout() {
     clearBeamContextsOnLogout();
     setSession(null);
@@ -256,7 +313,7 @@ export function SkillzArenaApp() {
     setRoute("encounter");
   }
 
-  function handleEncounterComplete(result: ResolveBossEncounterResponse) {
+  async function handleEncounterComplete(result: ResolveBossEncounterResponse) {
     if (!session) {
       return;
     }
@@ -265,15 +322,23 @@ export function SkillzArenaApp() {
       ...session,
       arenaProgress: result.arenaProgress,
       merchantState: {
+        ...session.merchantState,
         success: result.success,
         error: result.error,
         gameXp: result.playerState.gameXp,
         gameLevel: result.playerState.gameLevel,
         equippedWeaponId: result.playerState.equippedWeaponId,
         startingWeaponId: result.playerState.startingWeaponId,
+        gold: result.playerState.gold,
         arenaProgress: result.arenaProgress,
       },
     });
+
+    try {
+      await refreshMerchantState();
+    } catch (refreshError) {
+      setError(toUserFacingError(refreshError));
+    }
   }
 
   if (isBootstrapping) {
@@ -372,8 +437,11 @@ export function SkillzArenaApp() {
           error={error}
           isBusy={isBusy}
           merchantState={session.merchantState}
+          onArenaProgressChange={handleArenaProgressChange}
           onEnterCave={handleEnterCave}
           onLogout={handleLogout}
+          onMerchantStateChange={handleMerchantStateChange}
+          onMerchantStateRefresh={refreshMerchantState}
           onRefreshArena={handleRefreshProgress}
           onReturnToArena={() => setRoute("arena")}
           session={session}
@@ -391,8 +459,11 @@ export function SkillzArenaApp() {
           error={error}
           isBusy={isBusy}
           merchantState={session.merchantState}
+          onArenaProgressChange={handleArenaProgressChange}
           onEnterCave={handleEnterCave}
           onLogout={handleLogout}
+          onMerchantStateChange={handleMerchantStateChange}
+          onMerchantStateRefresh={refreshMerchantState}
           onRefreshArena={handleRefreshProgress}
           onReturnToArena={() => setRoute("arena")}
           session={session}

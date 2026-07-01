@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Beamable.Common.Content;
 using Beamable.Common.Content.Validation;
+using Beamable.Common.Inventory;
 
 namespace Beamable.GameService;
 
@@ -79,4 +80,35 @@ public class MerchantProgressionContent : ContentObject
     public string startingWeaponId = "";
 
     public List<int> gameXpThresholds = new();
+}
+
+[Serializable]
+[ContentType("loot")]
+public class MerchantLootContent : ItemContent
+{
+    [CannotBeBlank]
+    public string displayName = "";
+
+    [CannotBeBlank]
+    public string rarity = "";
+
+    [MustBeNonNegative]
+    public int sellPrice;
+
+    [MustBeNonNegative]
+    public int arenaXpOnSell;
+}
+
+[Serializable]
+[ContentType("weapon")]
+public class MerchantWeaponContent : ItemContent
+{
+    [CannotBeBlank]
+    public string displayName = "";
+
+    [MustBeNonNegative]
+    public int power;
+
+    [MustBeNonNegative]
+    public int tier;
 }

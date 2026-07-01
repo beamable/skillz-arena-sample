@@ -8,6 +8,9 @@ export const defaultMerchantState: GetMerchantPlayerStateResponse = {
   gameLevel: 1,
   equippedWeaponId: "items.weapon.starter_blade",
   startingWeaponId: "items.weapon.starter_blade",
+  gold: "0",
+  loot: [],
+  ownedWeapons: [],
   arenaProgress: {
     ...defaultArenaProgress,
     duplicateEvent: false,

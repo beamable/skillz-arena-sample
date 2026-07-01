@@ -47,6 +47,7 @@ export type MerchantLoot = {
   displayName: string;
   rarity: string;
   sellPrice: number;
+  arenaXpOnSell: number;
 };
 
 export type MerchantCave = {
@@ -192,6 +193,7 @@ function normalizeLoot(content: ContentBase): MerchantLoot {
     displayName: getString(content, "displayName", labelFromContentId(content.id)),
     rarity: getString(content, "rarity", "common"),
     sellPrice: getNumber(content, "sellPrice", 0),
+    arenaXpOnSell: getNumber(content, "arenaXpOnSell", 0),
   };
 }
 
@@ -282,8 +284,8 @@ function getListingPriceAmount(content: ContentBase): number {
 }
 
 function getListingPriceSymbol(content: ContentBase): string {
-  const price = getData<{ currencySymbol?: string; amount?: number }>(content, "price", {});
-  return price.currencySymbol ?? GOLD_CURRENCY_ID;
+  const price = getData<{ currencySymbol?: string; symbol?: string; amount?: number }>(content, "price", {});
+  return ("symbol" in price && typeof price.symbol === "string" ? price.symbol : price.currencySymbol) ?? GOLD_CURRENCY_ID;
 }
 
 function getData<T>(content: ContentBase, field: string, fallback: T): T {

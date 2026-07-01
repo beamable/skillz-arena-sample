@@ -32,6 +32,20 @@ export type GetGameArenaProgressResponse = {
   updatedAt: string; 
 };
 
+export type MerchantLootStackResponse = { 
+  itemContentId: string; 
+  inventoryContentId: string; 
+  quantity: number; 
+  instanceIds: (bigint | string)[]; 
+};
+
+export type MerchantOwnedWeaponResponse = { 
+  itemContentId: string; 
+  inventoryContentId: string; 
+  quantity: number; 
+  instanceIds: (bigint | string)[]; 
+};
+
 export type GetMerchantPlayerStateArenaProgressResponse = { 
   success: boolean; 
   error: string; 
@@ -55,6 +69,9 @@ export type GetMerchantPlayerStateResponse = {
   gameLevel: number; 
   equippedWeaponId: string; 
   startingWeaponId: string; 
+  gold: bigint | string; 
+  loot: MerchantLootStackResponse[]; 
+  ownedWeapons: MerchantOwnedWeaponResponse[]; 
   arenaProgress: GetMerchantPlayerStateArenaProgressResponse; 
 };
 
@@ -63,6 +80,7 @@ export type MerchantPlayerStateResponse = {
   gameLevel: number; 
   equippedWeaponId: string; 
   startingWeaponId: string; 
+  gold: bigint | string; 
 };
 
 export type MerchantLootRollResponse = { 
@@ -109,6 +127,72 @@ export type ResolveBossEncounterRequest = {
 
 export type ResolveBossEncounterRequestArgs = { 
   request: ResolveBossEncounterRequest; 
+};
+
+export type SellLootArenaProgressResponse = { 
+  success: boolean; 
+  error: string; 
+  playerKey: string; 
+  totalXp: number; 
+  level: number; 
+  currentLevelXp: number; 
+  nextLevelXp: number; 
+  xpToNextLevel: number; 
+  duplicateEvent: boolean; 
+  didLevelUp: boolean; 
+  xpGranted: number; 
+  lastEventId: string; 
+  updatedAt: string; 
+};
+
+export type SellLootResponse = { 
+  success: boolean; 
+  error: string; 
+  eventId: string; 
+  itemContentId: string; 
+  quantitySold: number; 
+  goldGranted: number; 
+  arenaXpAwarded: number; 
+  arenaProgress: SellLootArenaProgressResponse; 
+};
+
+export type SellLootRequest = { 
+  itemContentId: string; 
+  quantity: number; 
+};
+
+export type SellLootRequestArgs = { 
+  request: SellLootRequest; 
+};
+
+export type BuyWeaponResponse = { 
+  success: boolean; 
+  error: string; 
+  listingId: string; 
+  weaponContentId: string; 
+  goldSpent: number; 
+};
+
+export type BuyWeaponRequest = { 
+  listingId: string; 
+};
+
+export type BuyWeaponRequestArgs = { 
+  request: BuyWeaponRequest; 
+};
+
+export type EquipWeaponResponse = { 
+  success: boolean; 
+  error: string; 
+  equippedWeaponId: string; 
+};
+
+export type EquipWeaponRequest = { 
+  weaponContentId: string; 
+};
+
+export type EquipWeaponRequestArgs = { 
+  request: EquipWeaponRequest; 
 };
 
 export type CompleteQuickGameArenaProgressResponse = { 

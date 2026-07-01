@@ -7,20 +7,36 @@ namespace Beamable.GameService
 	{
 		public const string GameXpStat = "merchant_game_xp";
 		public const string GameLevelStat = "merchant_game_level";
+		public const string EquippedWeaponStat = "merchant_equipped_weapon";
 
 		public static MerchantPlayerState CalculateState(
 			IReadOnlyList<int> thresholds,
 			int gameXp,
-			string startingWeaponId)
+			string startingWeaponId,
+			string equippedWeaponId = null)
 		{
 			var normalizedXp = Math.Max(0, gameXp);
+			var normalizedStartingWeaponId = startingWeaponId ?? string.Empty;
+			var normalizedEquippedWeaponId = string.IsNullOrWhiteSpace(equippedWeaponId)
+				? normalizedStartingWeaponId
+				: equippedWeaponId.Trim();
 			return new MerchantPlayerState
 			{
 				gameXp = normalizedXp,
 				gameLevel = CalculateLevel(thresholds, normalizedXp),
-				startingWeaponId = startingWeaponId ?? string.Empty,
-				equippedWeaponId = startingWeaponId ?? string.Empty
+				startingWeaponId = normalizedStartingWeaponId,
+				equippedWeaponId = normalizedEquippedWeaponId
 			};
+		}
+
+		public static string ParseStatString(IDictionary<string, string> stats, string key, string fallback = "")
+		{
+			if (stats == null || !stats.TryGetValue(key, out var rawValue))
+			{
+				return fallback;
+			}
+
+			return string.IsNullOrWhiteSpace(rawValue) ? fallback : rawValue.Trim();
 		}
 
 		public static int CalculateLevel(IReadOnlyList<int> thresholds, int gameXp)
@@ -59,6 +75,9 @@ namespace Beamable.GameService
 		public int gameLevel;
 		public string equippedWeaponId;
 		public string startingWeaponId;
+		public long gold;
+		public MerchantLootStackResponse[] loot = Array.Empty<MerchantLootStackResponse>();
+		public MerchantOwnedWeaponResponse[] ownedWeapons = Array.Empty<MerchantOwnedWeaponResponse>();
 
 		public MerchantPlayerStateResponse ToResponse()
 		{
@@ -67,7 +86,8 @@ namespace Beamable.GameService
 				gameXp = gameXp,
 				gameLevel = gameLevel,
 				equippedWeaponId = equippedWeaponId,
-				startingWeaponId = startingWeaponId
+				startingWeaponId = startingWeaponId,
+				gold = gold
 			};
 		}
 	}

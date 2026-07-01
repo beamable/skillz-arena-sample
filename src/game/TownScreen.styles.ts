@@ -235,6 +235,26 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "900",
   },
+  inlineButton: {
+    minWidth: 86,
+    minHeight: 38,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 6,
+    backgroundColor: "#f7c35f",
+    paddingHorizontal: 10,
+  },
+  inlineButtonText: {
+    color: "#22160a",
+    fontSize: 12,
+    fontWeight: "900",
+  },
+  emptyText: {
+    color: "#cbd5e1",
+    fontSize: 13,
+    fontWeight: "700",
+    lineHeight: 19,
+  },
   actions: {
     flexDirection: "row",
     gap: 10,
