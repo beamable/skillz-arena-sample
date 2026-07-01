@@ -56,15 +56,16 @@ namespace Beamable.GameService
 		}
 
 		[ClientCallable]
-		public async Task<ArenaProgressResponse> GetArenaProgress()
+		public async Task<GetGameArenaProgressResponse> GetArenaProgress()
 		{
 			var identity = await GetCurrentEmailIdentity();
 			if (!identity.success)
 			{
-				return ArenaProgressResponse.Invalid(identity.error);
+				return GetGameArenaProgressResponse.Invalid(identity.error);
 			}
 
-			return await CreateArenaBridge().GetProgress(identity.playerKey);
+			var progress = await CreateArenaBridge().GetProgress(identity.playerKey);
+			return GetGameArenaProgressResponse.FromArena(progress);
 		}
 
 		[ClientCallable]
@@ -100,7 +101,7 @@ namespace Beamable.GameService
 				error = progress.error,
 				eventId = eventId,
 				xpAwarded = progress.success ? QuickGameRules.XpAward : 0,
-				progress = progress
+				progress = CompleteQuickGameArenaProgressResponse.FromArena(progress)
 			};
 		}
 

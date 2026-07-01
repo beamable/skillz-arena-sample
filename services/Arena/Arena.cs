@@ -23,12 +23,12 @@ namespace Beamable.Arena
 		}
 
 		[ServerCallable]
-		public async Task<ArenaProgressResponse> RecordXpEvent(RecordArenaXpRequest request)
+		public async Task<RecordArenaXpResponse> RecordXpEvent(RecordArenaXpRequest request)
 		{
 			var validationError = ArenaValidation.ValidateRecordXpEvent(request);
 			if (validationError != null)
 			{
-				return ArenaProgressResponse.Invalid(validationError);
+				return RecordArenaXpResponse.Invalid(validationError);
 			}
 
 			var events = await Storage.ArenaStorageCollection<ArenaXpEventDocument>(XpEventsCollection);
@@ -41,7 +41,7 @@ namespace Beamable.Arena
 			if (existingEvent != null)
 			{
 				var existingProgress = await GetOrCreateProgress(progressCollection, existingEvent.playerKey);
-				return ArenaProgressResponse.FromProgress(existingProgress, true);
+				return RecordArenaXpResponse.FromProgress(existingProgress, true);
 			}
 
 			var now = DateTime.UtcNow;
@@ -88,24 +88,24 @@ namespace Beamable.Arena
 			currentProgress.lastEventId = eventDocument.eventId;
 			currentProgress.updatedAt = now;
 
-			var response = ArenaProgressResponse.FromProgress(currentProgress, false);
+			var response = RecordArenaXpResponse.FromProgress(currentProgress, false);
 			response.didLevelUp = newLevelState.level > previousLevel;
 			response.xpGranted = eventDocument.xpAmount;
 			return response;
 		}
 
 		[ServerCallable]
-		public async Task<ArenaProgressResponse> GetProgress(GetArenaProgressRequest request)
+		public async Task<GetArenaProgressResponse> GetProgress(GetArenaProgressRequest request)
 		{
 			var validationError = ArenaValidation.ValidateGetProgress(request);
 			if (validationError != null)
 			{
-				return ArenaProgressResponse.Invalid(validationError);
+				return GetArenaProgressResponse.Invalid(validationError);
 			}
 
 			var progressCollection = await Storage.ArenaStorageCollection<ArenaPlayerProgressDocument>(PlayerProgressCollection);
 			var progress = await GetOrCreateProgress(progressCollection, request.playerKey.Trim());
-			return ArenaProgressResponse.FromProgress(progress, false);
+			return GetArenaProgressResponse.FromProgress(progress, false);
 		}
 
 		private static string NormalizeOptional(string value)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Beamable.Common.Api;
@@ -33,13 +34,21 @@ namespace Beamable.GameService
 			return $"/basic/{arenaCid}.{arenaPid}.micro_{ArenaServiceName}/{methodName}";
 		}
 
+		public static Dictionary<string, object> CreateRequestPayload(object request)
+		{
+			return new Dictionary<string, object>
+			{
+				{ "request", request }
+			};
+		}
+
 		private async Task<T> Post<T>(string methodName, object body)
 		{
 			ConfigureRequesterForArena();
 			return await _signedRequester.Request<T>(
 				Method.POST,
 				CreateArenaRoute(_config.arenaCid, _config.arenaPid, methodName),
-				body,
+				CreateRequestPayload(body),
 				includeAuthHeader: false);
 		}
 

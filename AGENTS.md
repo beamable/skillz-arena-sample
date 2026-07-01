@@ -55,6 +55,12 @@ For this sample, keep the architecture intentionally small but still split by ow
 
 - Beamable microservices and microstorage code are written in C#.
 - Use the Beamable CLI generation flow when the project needs generated client code, service scaffolding, or project metadata updates.
+- Web clients for Beamable microservices must be generated through the Beamable CLI, not handwritten, whenever the React/TypeScript client calls those services.
+- Every time a C# microservice API, DTO, callable method, route, or generated service contract changes, regenerate the relevant TypeScript web client with `dotnet tool run beam -- project generate web-client --output-dir <output-dir> --lang ts -q`.
+- Keep generated web clients in PID-specific generated folders so Arena and game contracts remain separate. Do not manually edit generated client files; fix the C# service contract and regenerate.
+- When publishing microservices, switch the local Beamable config to the correct PID before building, planning, or releasing. Use the Arena PID for `services/` and the sample game PID for `game-services/`.
+- Keep the opposite PID's service folder ignored while publishing a realm so the deploy plan only sees services owned by that PID. For this repo, Arena publishing ignores `game-services/`; game publishing ignores `services/`.
+- Publish services with the Beamable CLI deployment flow: `dotnet tool run beam -- project build --ids <service> -q --raw`, then `dotnet tool run beam -- deploy plan --merge --sln <pid-service-solution> -q --raw`, then `dotnet tool run beam -- deploy release --from-latest-plan -q --raw`. Use `--merge` for this sample unless Moe explicitly asks for a replace deployment.
 - You may use the Beamable CLI as needed, but ask Moe before running CLI commands.
 - Keep generated code and handwritten code boundaries clean. Do not hand-edit generated files unless the Beamable workflow explicitly expects it.
 - Arena storage belongs to the Arena PID. The game PID should call Arena service APIs instead of reading Arena microstorage directly.

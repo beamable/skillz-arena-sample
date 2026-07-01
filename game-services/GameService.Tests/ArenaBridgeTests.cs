@@ -14,6 +14,17 @@ public class ArenaBridgeTests
 	}
 
 	[Fact]
+	public void CreateRequestPayload_WrapsDtoForBeamableNamedParameterBinding()
+	{
+		var request = new GetArenaProgressRequest { playerKey = "player-key" };
+
+		var payload = ArenaBridge.CreateRequestPayload(request);
+
+		Assert.True(payload.ContainsKey("request"));
+		Assert.Same(request, payload["request"]);
+	}
+
+	[Fact]
 	public void ArenaBridgeConfig_RejectsMissingSecret()
 	{
 		var config = new ArenaBridgeConfig

@@ -4,10 +4,25 @@
   "private": true,
   "description": "Beamable Skillz Arena sample using React Native, TypeScript, and the Beamable Web SDK.",
   "license": "UNLICENSED",
+  "main": "index.ts",
   "scripts": {
-    "check": "npm ls @beamable/sdk"
+    "check": "npm ls @beamable/sdk",
+    "typecheck": "tsc --noEmit",
+    "web": "expo start --web",
+    "start": "expo start"
   },
   "dependencies": {
-    "@beamable/sdk": "1.2.1"
+    "@beamable/sdk": "1.2.1",
+    "@expo/metro-runtime": "^56.0.15",
+    "expo": "^56.0.12",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-native": "^0.86.0",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
   }
 }

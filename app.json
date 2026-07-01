@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Skillz Arena Sample",
+    "slug": "skillz-arena-sample",
+    "version": "0.1.0",
+    "orientation": "landscape",
+    "platforms": ["web"],
+    "scheme": "skillz-arena-sample",
+    "userInterfaceStyle": "light",
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    }
+  }
+}

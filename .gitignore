@@ -12,6 +12,7 @@ web-build/
 # Metro / TypeScript / test output
 .metro-cache/
 .turbo/
+.expo-logs/
 coverage/
 *.tsbuildinfo
 

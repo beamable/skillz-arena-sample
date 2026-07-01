@@ -27,7 +27,7 @@ public class ArenaValidationTests
 	[Fact]
 	public void FromProgress_CanRepresentDuplicateEventWithoutGrantingXpAgain()
 	{
-		var response = ArenaProgressResponse.FromProgress(new ArenaPlayerProgressDocument
+		var response = GetArenaProgressResponse.FromProgress(new ArenaPlayerProgressDocument
 		{
 			playerKey = "hashed-player",
 			totalXp = 100,
