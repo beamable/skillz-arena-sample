@@ -1,40 +1,76 @@
 # Skillz Arena Sample
 
-React Native + TypeScript Beamable Web SDK sample for a two-PID Arena/game prototype.
+React Native + TypeScript sample using the Beamable Web SDK, Beamable microservices, and Beamable content.
 
-## Phase 1 Personal Test Procedure
+Arena is the game-agnostic meta layer in this sample. It does not own moment-to-moment gameplay, loot tables, weapons, shops, or local game economy. It owns the cross-game progression surface: XP events, Arena level state, idempotency, and the storage needed to make that progression portable across games.
 
-### 1. Confirm prerequisites
+The sample shows a small Arena progression loop:
 
-- Node.js is installed.
-- .NET SDK is installed.
-- The Beamable Web SDK package is installed at `@beamable/sdk@1.2.1`.
-- The sample game `GameService` is released to the sample game PID.
-- The Arena `Arena` service and `ArenaStorage` are released to the Arena PID.
-- Both realms have the realtime notification config:
-  - namespace: `notification`
-  - key: `publisher`
-  - value: `beamable`
+1. A player signs up or logs in with email/password.
+2. The player enters a merchant-style quick game.
+3. Game activity awards local game progress and can send XP events to Arena.
+4. Arena returns the player's updated Arena level and XP.
 
-### 2. Install dependencies
+The project uses two Beamable PIDs under one CID to keep the ownership boundary visible:
+
+- Arena PID: owns the game-agnostic meta layer: Arena XP, Arena level state, XP event idempotency, and Arena storage.
+- Game PID: owns this specific merchant game: game state, game content, loot, weapons, currency, and the bridge to Arena.
+
+## Local Setup
+
+### Prerequisites
+
+- Node.js
+- npm
+- .NET 8+ SDK
+- Beamable CLI
+- Arena and Game microservices deployed to the Beamable realms you are using
+
+The web app depends on `@beamable/sdk@1.2.1`.
+
+### Install Or Restore The Beamable CLI
+
+Beamable CLI is a .NET tool. This repo pins its CLI version in `.config/dotnet-tools.json`, so the preferred setup is to restore the local tool from the repo root:
+
+```powershell
+dotnet --version
+dotnet tool restore
+dotnet tool run beam -- version
+```
+
+If `dotnet tool restore` cannot find the tool, install the Beamable CLI globally first, then restore again:
+
+```powershell
+dotnet tool install --global Beamable.Tools
+beam version
+dotnet tool restore
+```
+
+Use `dotnet tool run beam -- <command>` inside this repo when you want the pinned local CLI version. A global `beam` command is convenient, but the local tool manifest is the version we expect for this sample.
+
+### Install App Dependencies
+
+From the repo root:
 
 ```powershell
 npm install
 ```
 
-### 3. Create local public client env
+### Configure Local Environment
 
 Create `.env.local` in the repo root. This file is ignored by git.
-
+Note: you can use your own CID and PIDs.
 ```env
 EXPO_PUBLIC_BEAMABLE_CID=1689160644344843
 EXPO_PUBLIC_BEAMABLE_ARENA_PID=DE_85621805437202432
 EXPO_PUBLIC_BEAMABLE_GAME_PID=DE_85621827599904768
 ```
 
-Do not put project secrets in `.env.local`. The browser client only needs CID/PID values.
+Use your own CID/PIDs if you publish the services and content to your own Beamable realms.
 
-### 4. Run validation checks
+Do not put project secrets in `.env.local`. The browser client only needs public CID/PID values.
+
+### Run Checks
 
 ```powershell
 npm run typecheck
@@ -42,13 +78,7 @@ dotnet test game-services\game-services.sln
 dotnet test services\services.sln
 ```
 
-Expected result:
-
-- TypeScript passes.
-- GameService tests pass.
-- Arena tests pass.
-
-### 5. Start the web app
+### Start The Web App
 
 ```powershell
 npm run web -- --port 63178
@@ -60,187 +90,119 @@ Open:
 http://localhost:63178
 ```
 
-### 6. Test a new account
+The app should let you sign up or log in, view the Arena hub, enter the merchant game, complete game actions, and see Arena progress returned through Beamable-backed services.
 
-1. Select `Signup`.
-2. Enter a test email and password.
-3. Click `Create Merchant`.
-4. Confirm the Arena hub loads.
+## Microservices
 
-Expected Arena hub state:
+Microservices are written in C# and have generated TypeScript clients under `src/generated`.
 
-- Header shows `Arena PID`.
-- Player email is visible.
-- `Game` health is `healthy`.
-- `Arena` health is `healthy`.
-- Arena Progress shows level 1 / 0 XP for a new account.
-- `Enter Game Gate` button is visible.
+### Arena Service
 
-### 7. Test route switching
-
-1. Click `Enter Game Gate`.
-2. Confirm the Merchant Town screen loads.
-3. Click `Return to Arena`.
-4. Confirm the Arena hub loads again.
-
-Expected Merchant Town state:
-
-- Header shows `Game PID`.
-- Gold is `0`.
-- Game XP is `0`.
-- Game Level is `1`.
-- Weapon is `Starter Blade`.
-- Arena progress is shown through the `GameService` bridge.
-- Cave and Shop controls are disabled placeholders for later phases.
-
-### 8. Test returning login
-
-1. Click `Logout`.
-2. Select `Login`.
-3. Enter the same email and password.
-4. Click `Enter Arena`.
-
-Expected result:
-
-- The Arena hub loads again.
-- Gate transition still works.
-- No browser console microservice 500s should appear for `GetArenaProgress`.
-
-## Current Microservice Client Shape
-
-The Phase 1 web client uses Beamable CLI generated web clients.
-
-Generated client output lives in PID-specific folders:
-
-- `src/generated/game/beamable/clients`
-- `src/generated/arena/beamable/clients`
-
-The generated clients extend `BeamMicroServiceClient` from `@beamable/sdk`.
-
-The game client is registered in `src/shared/beam/beamContexts.ts`:
-
-```ts
-beam.use(GameServiceClient);
-```
-
-The Arena client is registered separately against the Arena PID:
-
-```ts
-beam.use(ArenaClient);
-```
-
-The Web SDK then calls microservice endpoints through generated methods:
-
-```ts
-await beam.gameServiceClient.getArenaProgress();
-```
-
-For C# methods with named DTO parameters, generated client args match the parameter name. For example, `CompleteQuickGame(CompleteQuickGameRequest request)` is called with:
-
-```ts
-await beam.gameServiceClient.completeQuickGame({ request });
-```
-
-The game backend calls Arena through `game-services/GameService/ArenaBridge.cs` using `ISignedRequester` and explicit cross-PID JSON routes:
+Location:
 
 ```text
-/basic/{arenaCid}.{arenaPid}.micro_Arena/GetProgress
+services/Arena
+services/ArenaStorage
 ```
 
-That signed bridge also wraps Arena DTOs as:
+The Arena service owns canonical Arena progression across games. It is intentionally game-agnostic: games report validated XP events, and Arena records those events, ignores duplicate event IDs, calculates Arena level state, and stores player progress in Arena microstorage.
 
-```json
-{
-  "request": {}
-}
+Key calls:
+
+- `HealthCheck`
+- `RecordXpEvent`
+- `GetProgress`
+
+### Game Service
+
+Location:
+
+```text
+game-services/GameService
 ```
 
-This is required because Arena service methods use named parameters such as `GetProgress(GetArenaProgressRequest request)`.
+The Game service owns the merchant game loop. It reads game content, tracks merchant player state, resolves encounters, handles loot sales, weapon purchases, weapon equips, and quick-game completion.
 
-## Generated Web Client Command
+Key calls:
 
-The verified Beam CLI 7.2.0 command shape is:
+- `HealthCheck`
+- `GetPlayerProfile`
+- `GetArenaProgress`
+- `GetMerchantPlayerState`
+- `ResolveBossEncounter`
+- `SellLoot`
+- `BuyWeapon`
+- `EquipWeapon`
+- `CompleteQuickGame`
 
-```powershell
-dotnet tool run beam -- project generate web-client --output-dir <the-output-directory> --lang ts -q
-```
+The Game service calls Arena through `ArenaBridge` using signed cross-PID microservice requests. That keeps the merchant game as one possible XP source instead of making Arena depend on merchant-game internals. The browser client calls generated Game and Arena clients; it should not hand-build microservice routes.
 
-The CLI also accepts:
+### Generated Web Clients
 
-```powershell
-dotnet tool run beam -- project generate web-client -o <the-output-directory> -l typescript -q
-```
-
-Valid `--lang` values are:
-
-- `typescript`
-- `ts`
-- `javascript`
-- `js`
-
-Generated clients should be written to dedicated PID-specific generated folders such as:
+Generated client output lives in PID-specific folders:
 
 ```text
 src/generated/game/beamable
 src/generated/arena/beamable
 ```
 
-Generated files should then be treated as generated code and not manually edited.
-
-Whenever a C# microservice callable, DTO, or service contract changes, regenerate the relevant web client before compiling the React Native app.
-
-## Beamable Local Content (`.beamable/local`)
-
-### Why this folder is tracked here (and what to do in production)
-
-Beamable caches your local content workspace under `.beamable/local/content/<PID>/<manifest>/…`. By default — and as the recommended practice for real projects — this folder is **gitignored**, because content is realm-specific working state that is normally owned and edited through the Beamable Portal / your own content pipeline, with your realm as the source of truth.
-
-For this sample we intentionally **un-ignore `.beamable/local`** so the exact content set the prototype depends on ships with the repo: caves, bosses, drop tables, loot, weapons, the weapon store/listings, progression, and `currency.gold` on the game realm, plus the Arena-side currencies, leaderboards, tournaments, and game types. That lets you clone and publish it straight to your own realm instead of recreating every content object by hand.
-
-What stays ignored even here (never commit these):
-
-- `.beamable/temp/**` — CLI auth token (`auth.beam.json`) and logs.
-- `beamable.local.json` — local machine state that can hold secrets.
-
-Production recommendation: keep `.beamable/local` gitignored in production projects and manage content through the Portal / your content workflow. Treat committing content into source control as a sample-only convenience, not a pattern to copy into a shipping game.
-
-### Publishing this content to your realm
-
-Local content is cached per realm under `.beamable/local/content/<PID>/global`. This repo ships two PID folders from the sample's realms:
-
-- Game PID `DE_85621827599904768` — merchant game content (`merchant_*`, `items.loot.*`, `items.weapon.*`, `stores.*`, `listings.*`, `currency.gold`).
-- Arena PID `DE_85621805437202432` — Arena-side content (currencies, leaderboards, tournaments, game types).
-
-From the repo root (PowerShell):
+When a C# microservice callable, DTO, or service contract changes, regenerate the relevant web client:
 
 ```powershell
-# 1. Restore the Beam CLI (it is a local dotnet tool)
+dotnet tool run beam -- project generate web-client --output-dir <output-dir> --lang ts -q
+```
+
+Generated files should be treated as generated code.
+
+## Beamable Content
+
+This sample tracks Beamable local content under `.beamable/local` so the required sample content can travel with the repo.
+
+Tracked sample content includes:
+
+- Merchant caves
+- Merchant bosses
+- Merchant drop tables
+- Loot items
+- Weapons
+- Weapon shop/store listings
+- Merchant progression
+- `currency.gold`
+- Arena-side currencies, leaderboards, tournaments, and game types
+
+The shipped content folders are:
+
+```text
+.beamable/local/content/DE_85621827599904768/global
+.beamable/local/content/DE_85621805437202432/global
+```
+
+The first folder is the sample Game PID. The second folder is the sample Arena PID.
+
+### Publish Content
+
+From the repo root:
+
+```powershell
 dotnet tool restore
-
-# 2. Log in and point the CLI at YOUR org + realm
 dotnet tool run beam -- init
-
-# 3. Confirm the CLI is targeting the realm/PID you expect
 dotnet tool run beam -- config -q --raw
-
-# 4. (optional) Preview the local content the CLI sees before publishing
 dotnet tool run beam -- content ps
-
-# 5. Publish the local 'global' manifest to that realm
 dotnet tool run beam -- content publish
 ```
 
-Because the local cache is keyed by PID, `content publish` publishes the content stored under the **currently targeted** realm's PID folder:
+If you use your own Beamable realms, copy the committed content into your own PID folder before publishing:
 
-- If you work in the sample's realms (same CID/PIDs), the committed folders already match — step 5 publishes directly.
-- If you use your **own** realm (a different PID), copy the shipped content into your realm's folder first, then publish. For the game realm:
+```powershell
+New-Item -ItemType Directory -Force ".beamable/local/content/<YOUR_GAME_PID>/global" | Out-Null
+Copy-Item ".beamable/local/content/DE_85621827599904768/global/*" ".beamable/local/content/<YOUR_GAME_PID>/global/" -Recurse -Force
+```
 
-  ```powershell
-  # replace <YOUR_GAME_PID> with your realm's game PID
-  New-Item -ItemType Directory -Force ".beamable/local/content/<YOUR_GAME_PID>/global" | Out-Null
-  Copy-Item ".beamable/local/content/DE_85621827599904768/global/*" ".beamable/local/content/<YOUR_GAME_PID>/global/" -Recurse -Force
-  ```
+Repeat the same pattern for the Arena PID if you use a separate Arena realm.
 
-  Repeat with the Arena PID folder if you run a separate Arena realm, then run steps 3–5 with the CLI targeting that realm.
+Keep these files ignored:
 
-Finally, point the web client at the realm you published to by setting the matching CID/PIDs in `.env.local` (see "Create local public client env" above).
+- `.beamable/temp/**`
+- `beamable.local.json`
+
+Those files can contain local machine state, auth state, logs, or secrets.
