@@ -12,7 +12,11 @@ import {
 
 import { ArenaHub } from "../arena/ArenaHub";
 import { defaultArenaProgress } from "../arena/defaultArenaProgress";
+import { CaveEncounterScreen } from "../game/CaveEncounterScreen";
+import type { MerchantBoss, MerchantCave } from "../game/content/gameContent";
+import { defaultMerchantState } from "../game/defaultMerchantState";
 import { TownScreen } from "../game/TownScreen";
+import type { ResolveBossEncounterResponse } from "../generated/game/beamable/clients/types";
 import {
   clearBeamContextsOnLogout,
   getArenaBeam,
@@ -39,6 +43,10 @@ export function SkillzArenaApp() {
   const [isBusy, setIsBusy] = useState(false);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedEncounter, setSelectedEncounter] = useState<{
+    boss: MerchantBoss | undefined;
+    cave: MerchantCave;
+  } | null>(null);
 
   const canSubmit = useMemo(() => {
     return email.trim().length > 3 && password.length >= 6 && !isBusy;
@@ -52,11 +60,12 @@ export function SkillzArenaApp() {
     const gameClient = getRegisteredGameServiceClient(gameBeam);
     const arenaClient = getRegisteredArenaServiceClient(arenaBeam);
 
-    const [gameHealthResult, arenaHealthResult, profile, arenaProgress] = await Promise.allSettled([
+    const [gameHealthResult, arenaHealthResult, profile, arenaProgress, merchantState] = await Promise.allSettled([
       withTimeout(gameClient.healthCheck(), 10000, "GameService health check timed out."),
       withTimeout(arenaClient.healthCheck(), 10000, "Arena health check timed out."),
       withTimeout(gameClient.getPlayerProfile(), 10000, "Player profile request timed out."),
       withTimeout(gameClient.getArenaProgress(), 10000, "Arena progress request timed out."),
+      withTimeout(gameClient.getMerchantPlayerState(), 10000, "Merchant player state request timed out."),
     ]);
 
     if (profile.status === "rejected") {
@@ -65,11 +74,14 @@ export function SkillzArenaApp() {
 
     const resolvedProgress =
       arenaProgress.status === "fulfilled" ? arenaProgress.value : defaultArenaProgress;
+    const resolvedMerchantState =
+      merchantState.status === "fulfilled" ? merchantState.value : defaultMerchantState;
 
     setSession({
       email: sessionEmail,
       profile: profile.value,
       arenaProgress: resolvedProgress,
+      merchantState: resolvedMerchantState,
       health: {
         game: gameHealthResult.status === "fulfilled" ? gameHealthResult.value.status : "offline",
         arena: arenaHealthResult.status === "fulfilled" ? arenaHealthResult.value.status : "offline",
@@ -125,6 +137,7 @@ export function SkillzArenaApp() {
 
     try {
       const normalizedEmail = email.trim().toLowerCase();
+      let signupUsesExistingCredential = false;
 
       if (authMode === "signup") {
         clearBeamContextsOnLogout();
@@ -152,18 +165,19 @@ export function SkillzArenaApp() {
           8000,
           "Email availability check timed out.",
         );
-        if (emailStatus === CredentialStatus.Assigned) {
-          throw new Error("That email already has Beamable credentials. Switch to Login and enter the existing password.");
-        }
         if (emailStatus === CredentialStatus.Unknown) {
           throw new Error("Beamable could not verify whether that email is available. Try again in a moment.");
         }
 
-        await withTimeout(
-          beam.account.addCredentials({ email: normalizedEmail, password }),
-          10000,
-          "Email signup request timed out.",
-        );
+        if (emailStatus === CredentialStatus.Assigned) {
+          signupUsesExistingCredential = true;
+        } else {
+          await withTimeout(
+            beam.account.addCredentials({ email: normalizedEmail, password }),
+            10000,
+            "Email signup request timed out.",
+          );
+        }
       }
 
       const beam = await withTimeout(
@@ -171,11 +185,22 @@ export function SkillzArenaApp() {
         15000,
         "Game Beam context did not initialize in time.",
       );
-      const token = await withTimeout(
-        beam.auth.loginWithEmail({ email: normalizedEmail, password }),
-        10000,
-        "Email login request timed out.",
-      );
+      let token;
+      try {
+        token = await withTimeout(
+          beam.auth.loginWithEmail({ email: normalizedEmail, password }),
+          10000,
+          "Email login request timed out.",
+        );
+      } catch (loginError) {
+        if (signupUsesExistingCredential) {
+          throw new Error(
+            "That email already has Beamable credentials. Enter the existing password; logging in will create the player in this realm if needed.",
+          );
+        }
+
+        throw loginError;
+      }
       await withTimeout(beam.refresh(token), 15000, "Beamable session refresh timed out.");
       await loadSession(normalizedEmail);
     } catch (submitError) {
@@ -221,7 +246,34 @@ export function SkillzArenaApp() {
     setSession(null);
     setPassword("");
     setRoute("arena");
+    setSelectedEncounter(null);
     setError(null);
+  }
+
+  function handleEnterCave(cave: MerchantCave, boss: MerchantBoss | undefined) {
+    setSelectedEncounter({ cave, boss });
+    setError(null);
+    setRoute("encounter");
+  }
+
+  function handleEncounterComplete(result: ResolveBossEncounterResponse) {
+    if (!session) {
+      return;
+    }
+
+    setSession({
+      ...session,
+      arenaProgress: result.arenaProgress,
+      merchantState: {
+        success: result.success,
+        error: result.error,
+        gameXp: result.playerState.gameXp,
+        gameLevel: result.playerState.gameLevel,
+        equippedWeaponId: result.playerState.equippedWeaponId,
+        startingWeaponId: result.playerState.startingWeaponId,
+        arenaProgress: result.arenaProgress,
+      },
+    });
   }
 
   if (isBootstrapping) {
@@ -315,10 +367,31 @@ export function SkillzArenaApp() {
           onRefresh={handleRefreshProgress}
           session={session}
         />
+      ) : route === "town" ? (
+        <TownScreen
+          error={error}
+          isBusy={isBusy}
+          merchantState={session.merchantState}
+          onEnterCave={handleEnterCave}
+          onLogout={handleLogout}
+          onRefreshArena={handleRefreshProgress}
+          onReturnToArena={() => setRoute("arena")}
+          session={session}
+        />
+      ) : selectedEncounter ? (
+        <CaveEncounterScreen
+          boss={selectedEncounter.boss}
+          cave={selectedEncounter.cave}
+          onComplete={handleEncounterComplete}
+          onReturnToTown={() => setRoute("town")}
+          session={session}
+        />
       ) : (
         <TownScreen
           error={error}
           isBusy={isBusy}
+          merchantState={session.merchantState}
+          onEnterCave={handleEnterCave}
           onLogout={handleLogout}
           onRefreshArena={handleRefreshProgress}
           onReturnToArena={() => setRoute("arena")}

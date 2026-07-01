@@ -57,6 +57,21 @@ export class GameServiceClient extends BeamMicroServiceClient {
     });
   }
   
+  async getMerchantPlayerState(): Promise<Types.GetMerchantPlayerStateResponse> {
+    return this.request({
+      endpoint: "GetMerchantPlayerState",
+      withAuth: true
+    });
+  }
+  
+  async resolveBossEncounter(params: Types.ResolveBossEncounterRequestArgs): Promise<Types.ResolveBossEncounterResponse> {
+    return this.request({
+      endpoint: "ResolveBossEncounter",
+      payload: params,
+      withAuth: true
+    });
+  }
+  
   async completeQuickGame(params: Types.CompleteQuickGameRequestArgs): Promise<Types.CompleteQuickGameResponse> {
     return this.request({
       endpoint: "CompleteQuickGame",

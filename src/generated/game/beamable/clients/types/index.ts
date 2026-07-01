@@ -32,6 +32,85 @@ export type GetGameArenaProgressResponse = {
   updatedAt: string; 
 };
 
+export type GetMerchantPlayerStateArenaProgressResponse = { 
+  success: boolean; 
+  error: string; 
+  playerKey: string; 
+  totalXp: number; 
+  level: number; 
+  currentLevelXp: number; 
+  nextLevelXp: number; 
+  xpToNextLevel: number; 
+  duplicateEvent: boolean; 
+  didLevelUp: boolean; 
+  xpGranted: number; 
+  lastEventId: string; 
+  updatedAt: string; 
+};
+
+export type GetMerchantPlayerStateResponse = { 
+  success: boolean; 
+  error: string; 
+  gameXp: number; 
+  gameLevel: number; 
+  equippedWeaponId: string; 
+  startingWeaponId: string; 
+  arenaProgress: GetMerchantPlayerStateArenaProgressResponse; 
+};
+
+export type MerchantPlayerStateResponse = { 
+  gameXp: number; 
+  gameLevel: number; 
+  equippedWeaponId: string; 
+  startingWeaponId: string; 
+};
+
+export type MerchantLootRollResponse = { 
+  itemContentId: string; 
+  quantity: number; 
+};
+
+export type ResolveBossEncounterArenaProgressResponse = { 
+  success: boolean; 
+  error: string; 
+  playerKey: string; 
+  totalXp: number; 
+  level: number; 
+  currentLevelXp: number; 
+  nextLevelXp: number; 
+  xpToNextLevel: number; 
+  duplicateEvent: boolean; 
+  didLevelUp: boolean; 
+  xpGranted: number; 
+  lastEventId: string; 
+  updatedAt: string; 
+};
+
+export type ResolveBossEncounterResponse = { 
+  success: boolean; 
+  error: string; 
+  eventId: string; 
+  caveId: string; 
+  caveName: string; 
+  bossId: string; 
+  bossName: string; 
+  defeated: boolean; 
+  gameXpAwarded: number; 
+  arenaXpAwarded: number; 
+  playerState: MerchantPlayerStateResponse; 
+  loot: MerchantLootRollResponse[]; 
+  arenaProgress: ResolveBossEncounterArenaProgressResponse; 
+};
+
+export type ResolveBossEncounterRequest = { 
+  caveId: string; 
+  sessionId: string; 
+};
+
+export type ResolveBossEncounterRequestArgs = { 
+  request: ResolveBossEncounterRequest; 
+};
+
 export type CompleteQuickGameArenaProgressResponse = { 
   success: boolean; 
   error: string; 

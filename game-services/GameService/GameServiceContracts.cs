@@ -39,6 +39,197 @@ namespace Beamable.GameService
 	}
 
 	[Serializable]
+	public class GetMerchantPlayerStateResponse
+	{
+		public bool success;
+		public string error;
+		public int gameXp;
+		public int gameLevel;
+		public string equippedWeaponId;
+		public string startingWeaponId;
+		public GetMerchantPlayerStateArenaProgressResponse arenaProgress;
+
+		public static GetMerchantPlayerStateResponse Invalid(string error)
+		{
+			return new GetMerchantPlayerStateResponse
+			{
+				success = false,
+				error = error,
+				equippedWeaponId = string.Empty,
+				startingWeaponId = string.Empty,
+				arenaProgress = GetMerchantPlayerStateArenaProgressResponse.Invalid(error)
+			};
+		}
+	}
+
+	[Serializable]
+	public class ResolveBossEncounterRequest
+	{
+		public string caveId;
+		public string sessionId;
+	}
+
+	[Serializable]
+	public class ResolveBossEncounterResponse
+	{
+		public bool success;
+		public string error;
+		public string eventId;
+		public string caveId;
+		public string caveName;
+		public string bossId;
+		public string bossName;
+		public bool defeated;
+		public int gameXpAwarded;
+		public int arenaXpAwarded;
+		public MerchantPlayerStateResponse playerState;
+		public MerchantLootRollResponse[] loot;
+		public ResolveBossEncounterArenaProgressResponse arenaProgress;
+
+		public static ResolveBossEncounterResponse Invalid(string error)
+		{
+			return new ResolveBossEncounterResponse
+			{
+				success = false,
+				error = error,
+				eventId = string.Empty,
+				caveId = string.Empty,
+				caveName = string.Empty,
+				bossId = string.Empty,
+				bossName = string.Empty,
+				loot = Array.Empty<MerchantLootRollResponse>(),
+				playerState = MerchantPlayerStateResponse.Default(),
+				arenaProgress = ResolveBossEncounterArenaProgressResponse.Invalid(error)
+			};
+		}
+	}
+
+	[Serializable]
+	public class GetMerchantPlayerStateArenaProgressResponse
+	{
+		public bool success;
+		public string error;
+		public string playerKey;
+		public int totalXp;
+		public int level;
+		public int currentLevelXp;
+		public int nextLevelXp;
+		public int xpToNextLevel;
+		public bool duplicateEvent;
+		public bool didLevelUp;
+		public int xpGranted;
+		public string lastEventId;
+		public DateTime updatedAt;
+
+		public static GetMerchantPlayerStateArenaProgressResponse Invalid(string error)
+		{
+			return new GetMerchantPlayerStateArenaProgressResponse
+			{
+				success = false,
+				error = error,
+				playerKey = string.Empty,
+				lastEventId = string.Empty
+			};
+		}
+
+		public static GetMerchantPlayerStateArenaProgressResponse FromArena(ArenaProgressResponse progress)
+		{
+			return new GetMerchantPlayerStateArenaProgressResponse
+			{
+				success = progress.success,
+				error = progress.error,
+				playerKey = progress.playerKey,
+				totalXp = progress.totalXp,
+				level = progress.level,
+				currentLevelXp = progress.currentLevelXp,
+				nextLevelXp = progress.nextLevelXp,
+				xpToNextLevel = progress.xpToNextLevel,
+				duplicateEvent = progress.duplicateEvent,
+				didLevelUp = progress.didLevelUp,
+				xpGranted = progress.xpGranted,
+				lastEventId = progress.lastEventId,
+				updatedAt = progress.updatedAt
+			};
+		}
+	}
+
+	[Serializable]
+	public class ResolveBossEncounterArenaProgressResponse
+	{
+		public bool success;
+		public string error;
+		public string playerKey;
+		public int totalXp;
+		public int level;
+		public int currentLevelXp;
+		public int nextLevelXp;
+		public int xpToNextLevel;
+		public bool duplicateEvent;
+		public bool didLevelUp;
+		public int xpGranted;
+		public string lastEventId;
+		public DateTime updatedAt;
+
+		public static ResolveBossEncounterArenaProgressResponse Invalid(string error)
+		{
+			return new ResolveBossEncounterArenaProgressResponse
+			{
+				success = false,
+				error = error,
+				playerKey = string.Empty,
+				lastEventId = string.Empty
+			};
+		}
+
+		public static ResolveBossEncounterArenaProgressResponse FromArena(ArenaProgressResponse progress)
+		{
+			return new ResolveBossEncounterArenaProgressResponse
+			{
+				success = progress.success,
+				error = progress.error,
+				playerKey = progress.playerKey,
+				totalXp = progress.totalXp,
+				level = progress.level,
+				currentLevelXp = progress.currentLevelXp,
+				nextLevelXp = progress.nextLevelXp,
+				xpToNextLevel = progress.xpToNextLevel,
+				duplicateEvent = progress.duplicateEvent,
+				didLevelUp = progress.didLevelUp,
+				xpGranted = progress.xpGranted,
+				lastEventId = progress.lastEventId,
+				updatedAt = progress.updatedAt
+			};
+		}
+	}
+
+	[Serializable]
+	public class MerchantPlayerStateResponse
+	{
+		public int gameXp;
+		public int gameLevel;
+		public string equippedWeaponId;
+		public string startingWeaponId;
+
+		public static MerchantPlayerStateResponse Default()
+		{
+			return new MerchantPlayerStateResponse
+			{
+				gameXp = 0,
+				gameLevel = 1,
+				equippedWeaponId = string.Empty,
+				startingWeaponId = string.Empty
+			};
+		}
+	}
+
+	[Serializable]
+	public class MerchantLootRollResponse
+	{
+		public string itemContentId;
+		public int quantity;
+	}
+
+	[Serializable]
 	public class CompleteQuickGameResponse
 	{
 		public bool success;

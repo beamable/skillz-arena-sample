@@ -192,6 +192,13 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: "#1f2937",
   },
+  contentRowEnabled: {
+    borderWidth: 1,
+    borderColor: "rgba(247,195,95,0.42)",
+  },
+  contentRowDisabled: {
+    opacity: 0.55,
+  },
   contentRowMain: {
     flex: 1,
     minWidth: 0,

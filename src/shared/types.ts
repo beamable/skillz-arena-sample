@@ -1,9 +1,10 @@
 import type {
   GetGameArenaProgressResponse,
+  GetMerchantPlayerStateResponse,
   PlayerProfileResponse,
 } from "../generated/game/beamable/clients/types";
 
-export type AppRoute = "arena" | "town";
+export type AppRoute = "arena" | "town" | "encounter";
 
 export type AuthMode = "login" | "signup";
 
@@ -16,5 +17,6 @@ export type PlayerSession = {
   email: string;
   profile: PlayerProfileResponse;
   arenaProgress: GetGameArenaProgressResponse;
+  merchantState: GetMerchantPlayerStateResponse;
   health: ServiceHealthState;
 };

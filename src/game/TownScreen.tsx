@@ -4,10 +4,12 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { getGameBeam } from "../shared/beam/beamContexts";
 import { toUserFacingError } from "../shared/beam/beamErrors";
 import type { PlayerSession } from "../shared/types";
+import type { GetMerchantPlayerStateResponse } from "../generated/game/beamable/clients/types";
 
 import {
   loadMerchantGameContent,
   type MerchantBoss,
+  type MerchantCave,
   type MerchantGameContent,
   type MerchantShopListing,
 } from "./content/gameContent";
@@ -16,6 +18,8 @@ import { styles } from "./TownScreen.styles";
 type TownScreenProps = {
   error: string | null;
   isBusy: boolean;
+  merchantState: GetMerchantPlayerStateResponse;
+  onEnterCave: (cave: MerchantCave, boss: MerchantBoss | undefined) => void;
   onLogout: () => void;
   onRefreshArena: () => void;
   onReturnToArena: () => void;
@@ -25,6 +29,8 @@ type TownScreenProps = {
 export function TownScreen({
   error,
   isBusy,
+  merchantState,
+  onEnterCave,
   onLogout,
   onRefreshArena,
   onReturnToArena,
@@ -107,9 +113,9 @@ export function TownScreen({
           </Text>
 
           <View style={styles.statGrid}>
-            <StatCard label="Gold" value={`0 ${content?.goldCurrencyId ?? "currency.gold"}`} />
-            <StatCard label="Game XP" value="0" />
-            <StatCard label="Game Level" value="1" />
+            <StatCard label="Gold" value="0 Gold" />
+            <StatCard label="Game XP" value={`${merchantState.gameXp}`} />
+            <StatCard label="Game Level" value={`${merchantState.gameLevel}`} />
             <StatCard
               label="Weapon"
               value={
@@ -141,7 +147,9 @@ export function TownScreen({
                   <CaveRow
                     key={cave.id}
                     boss={content.bosses.find((candidate) => candidate.id === cave.bossId)}
+                    canEnter={merchantState.gameLevel >= cave.requiredGameLevel}
                     caveName={cave.displayName}
+                    onEnter={() => onEnterCave(cave, content.bosses.find((candidate) => candidate.id === cave.bossId))}
                     requiredLevel={cave.requiredGameLevel}
                     tier={cave.tier}
                   />
@@ -162,7 +170,6 @@ export function TownScreen({
 
           <View style={styles.actions}>
             <PrimaryButton label="Return to Arena" onPress={onReturnToArena} />
-            <DisabledAction label="Cave" />
             <DisabledAction label="Shop" />
           </View>
         </View>
@@ -220,17 +227,26 @@ function StatCard({ label, value }: { label: string; value: string }) {
 
 function CaveRow({
   boss,
+  canEnter,
   caveName,
+  onEnter,
   requiredLevel,
   tier,
 }: {
   boss: MerchantBoss | undefined;
+  canEnter: boolean;
   caveName: string;
+  onEnter: () => void;
   requiredLevel: number;
   tier: number;
 }) {
   return (
-    <View style={styles.contentRow}>
+    <Pressable
+      accessibilityRole="button"
+      disabled={!canEnter}
+      onPress={onEnter}
+      style={[styles.contentRow, canEnter ? styles.contentRowEnabled : styles.contentRowDisabled]}
+    >
       <View style={styles.contentRowMain}>
         <Text style={styles.contentRowTitle}>{caveName}</Text>
         <Text style={styles.contentRowSubtitle}>
@@ -241,7 +257,7 @@ function CaveRow({
         <Text style={styles.badge}>T{tier}</Text>
         <Text style={styles.badge}>Lv {requiredLevel}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
