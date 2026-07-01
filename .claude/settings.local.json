@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.beamable.com)",
+      "Bash(xargs grep -ln \"export.*makeApiRequest\")",
+      "WebSearch",
+      "Bash(dotnet build *)"
+    ]
+  }
+}
