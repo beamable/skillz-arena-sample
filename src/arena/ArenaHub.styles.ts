@@ -200,4 +200,78 @@ export const styles = StyleSheet.create({
     opacity: 0.85,
     transform: [{ translateY: 1 }],
   },
+  levelMarker: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  markerTick: {
+    height: 2,
+    alignSelf: "stretch",
+    backgroundColor: "#b9a77e",
+    opacity: 0.7,
+  },
+  markerTickReached: {
+    backgroundColor: "#f7c35f",
+    opacity: 1,
+  },
+  markerChip: {
+    position: "absolute",
+    top: -8,
+    backgroundColor: "#111827",
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderWidth: 1,
+    borderColor: "#b9a77e",
+  },
+  markerChipReached: {
+    borderColor: "#f7c35f",
+  },
+  markerChipText: {
+    color: "#cbd5e1",
+    fontSize: 9,
+    fontWeight: "900",
+  },
+  markerChipTextReached: {
+    color: "#f7c35f",
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  emptyText: {
+    color: "#cbd5e1",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "700",
+  },
+  warningText: {
+    color: "#fcd34d",
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  gateOverlay: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(8, 12, 20, 0.86)",
+    zIndex: 10,
+  },
+  gateOverlayText: {
+    color: "#f7c35f",
+    fontSize: 22,
+    fontWeight: "900",
+  },
+  gateOverlaySub: {
+    color: "#cbd5e1",
+    fontSize: 13,
+    marginTop: 6,
+  },
 });

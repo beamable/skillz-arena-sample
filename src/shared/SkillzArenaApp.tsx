@@ -245,6 +245,13 @@ export function SkillzArenaApp() {
     }
   }
 
+  function handleReturnToArena() {
+    setRoute("arena");
+    // Re-fetch Arena's canonical progress (via the GameService signed bridge) so the hub
+    // reflects XP earned during the town/encounter loop without a manual Refresh.
+    void handleRefreshProgress();
+  }
+
   async function refreshMerchantState() {
     const gameBeam = await withTimeout(
       getGameBeam(),
@@ -443,7 +450,7 @@ export function SkillzArenaApp() {
           onMerchantStateChange={handleMerchantStateChange}
           onMerchantStateRefresh={refreshMerchantState}
           onRefreshArena={handleRefreshProgress}
-          onReturnToArena={() => setRoute("arena")}
+          onReturnToArena={handleReturnToArena}
           session={session}
         />
       ) : selectedEncounter ? (
@@ -465,7 +472,7 @@ export function SkillzArenaApp() {
           onMerchantStateChange={handleMerchantStateChange}
           onMerchantStateRefresh={refreshMerchantState}
           onRefreshArena={handleRefreshProgress}
-          onReturnToArena={() => setRoute("arena")}
+          onReturnToArena={handleReturnToArena}
           session={session}
         />
       )}
