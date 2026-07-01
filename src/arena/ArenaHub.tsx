@@ -3,6 +3,8 @@ import { ActivityIndicator, Animated, Pressable, ScrollView, Text, View } from "
 
 import type { PlayerSession } from "../shared/types";
 
+import { GateStructure } from "../shared/sprites/GateStructure";
+
 import { arenaBandFraction, buildArenaLevelMarkers } from "./arenaLevels";
 import { styles } from "./ArenaHub.styles";
 
@@ -156,6 +158,7 @@ export function ArenaHub({
 
         {isEntering ? (
           <Animated.View pointerEvents="none" style={[styles.gateOverlay, { opacity: overlayAnim }]}>
+            <GateStructure openProgress={overlayAnim} size={240} />
             <Text style={styles.gateOverlayText}>Opening the gate…</Text>
             <Text style={styles.gateOverlaySub}>Entering the merchant PID</Text>
           </Animated.View>

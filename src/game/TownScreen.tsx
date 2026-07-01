@@ -1,9 +1,13 @@
+import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { getGameBeam } from "../shared/beam/beamContexts";
 import { getRegisteredGameServiceClient } from "../shared/beam/beamContexts";
 import { toUserFacingError } from "../shared/beam/beamErrors";
+import { LootCard } from "../shared/sprites/LootCard";
+import { MerchantFigure } from "../shared/sprites/MerchantFigure";
+import { WeaponIcon } from "../shared/sprites/WeaponIcon";
 import type { PlayerSession } from "../shared/types";
 import type {
   GetGameArenaProgressResponse,
@@ -179,6 +183,9 @@ export function TownScreen({
               />
             ))}
           </View>
+          <View style={styles.merchantSlot}>
+            <MerchantFigure size={150} />
+          </View>
           <View style={styles.counter}>
             <Text style={styles.counterText}>Exotic Materials</Text>
           </View>
@@ -206,6 +213,7 @@ export function TownScreen({
                   ? `${getWeaponName(content, merchantState.equippedWeaponId)} P${getWeaponPower(content, merchantState.equippedWeaponId)}`
                   : "Loading..."
               }
+              icon={<WeaponIcon weaponId={merchantState.equippedWeaponId} size={34} />}
             />
           </View>
 
@@ -245,10 +253,11 @@ export function TownScreen({
                   <Text style={styles.sectionHint}>Beamable items</Text>
                 </View>
                 {merchantState.loot.length > 0 ? (
-                  merchantState.loot.map((stack) => (
+                  merchantState.loot.map((stack, index) => (
                     <LootRow
                       key={stack.itemContentId}
                       disabled={Boolean(actionKey)}
+                      index={index}
                       isBusy={actionKey === `sell:${stack.itemContentId}`}
                       loot={content.loot.find((item) => item.id === stack.itemContentId)}
                       onSell={() => sellLoot(stack)}
@@ -321,11 +330,18 @@ function PrimaryButton({ label, onPress }: Pick<ButtonProps, "label" | "onPress"
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string }) {
+function StatCard({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
     <View style={styles.statCard}>
       <Text style={styles.statLabel}>{label}</Text>
-      <Text style={styles.statValue}>{value}</Text>
+      {icon ? (
+        <View style={styles.statValueRow}>
+          {icon}
+          <Text style={[styles.statValue, styles.statValueInline]}>{value}</Text>
+        </View>
+      ) : (
+        <Text style={styles.statValue}>{value}</Text>
+      )}
     </View>
   );
 }
@@ -368,12 +384,14 @@ function CaveRow({
 
 function LootRow({
   disabled,
+  index,
   isBusy,
   loot,
   onSell,
   stack,
 }: {
   disabled: boolean;
+  index: number;
   isBusy: boolean;
   loot: MerchantGameContent["loot"][number] | undefined;
   onSell: () => void;
@@ -381,17 +399,17 @@ function LootRow({
 }) {
   const sellPrice = (loot?.sellPrice ?? 0) * stack.quantity;
   const arenaXp = (loot?.arenaXpOnSell ?? 0) * stack.quantity;
+  const subtitle = `${sellPrice} Gold${arenaXp > 0 ? ` · Arena XP +${arenaXp}` : ""}`;
 
   return (
-    <View style={styles.contentRow}>
-      <View style={styles.contentRowMain}>
-        <Text style={styles.contentRowTitle}>{loot?.displayName ?? labelFromContentId(stack.itemContentId)} x{stack.quantity}</Text>
-        <Text style={styles.contentRowSubtitle}>
-          {loot?.rarity ?? "loot"} - {sellPrice} Gold{arenaXp > 0 ? ` - Arena XP +${arenaXp}` : ""}
-        </Text>
-      </View>
-      <InlineButton disabled={disabled} label={isBusy ? "Selling..." : "Sell Stack"} onPress={onSell} />
-    </View>
+    <LootCard
+      name={loot?.displayName ?? labelFromContentId(stack.itemContentId)}
+      rarity={loot?.rarity ?? "common"}
+      quantity={stack.quantity}
+      subtitle={subtitle}
+      revealIndex={index}
+      action={<InlineButton disabled={disabled} label={isBusy ? "Selling..." : "Sell Stack"} onPress={onSell} />}
+    />
   );
 }
 
@@ -421,6 +439,7 @@ function ShopListingRow({
 
   return (
     <View style={styles.contentRow}>
+      <WeaponIcon weaponId={listing.weapon.id} tier={listing.weapon.tier} size={40} />
       <View style={styles.contentRowMain}>
         <Text style={styles.contentRowTitle}>{listing.weapon.displayName}</Text>
         <Text style={styles.contentRowSubtitle}>

@@ -46,6 +46,19 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
+  merchantSlot: {
+    marginBottom: -26,
+    zIndex: 0,
+  },
+  statValueRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 8,
+  },
+  statValueInline: {
+    marginTop: 0,
+  },
   awning: {
     width: 360,
     height: 72,

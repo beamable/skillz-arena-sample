@@ -193,4 +193,14 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  strikeWeapon: {
+    position: "absolute",
+    top: 150,
+    alignSelf: "center",
+    zIndex: 5,
+  },
+  lootList: {
+    gap: 8,
+    marginTop: 2,
+  },
 });

@@ -268,6 +268,7 @@ export const styles = StyleSheet.create({
     color: "#f7c35f",
     fontSize: 22,
     fontWeight: "900",
+    marginTop: 18,
   },
   gateOverlaySub: {
     color: "#cbd5e1",

@@ -1,10 +1,14 @@
-import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { useMemo, useRef, useState } from "react";
+import { ActivityIndicator, Animated, Pressable, ScrollView, Text, View } from "react-native";
 
 import type { ResolveBossEncounterResponse } from "../generated/game/beamable/clients/types";
 import { getGameBeam, getRegisteredGameServiceClient } from "../shared/beam/beamContexts";
 import { toUserFacingError } from "../shared/beam/beamErrors";
 import { withTimeout } from "../shared/async/withTimeout";
+import { useEntrance, useHitFlash, useIdleBob, useStrike } from "../shared/anim/animationHooks";
+import { BossSprite } from "../shared/sprites/BossSprite";
+import { LootCard } from "../shared/sprites/LootCard";
+import { WeaponIcon } from "../shared/sprites/WeaponIcon";
 import type { PlayerSession } from "../shared/types";
 
 import type { MerchantBoss, MerchantCave } from "./content/gameContent";
@@ -34,9 +38,20 @@ export function CaveEncounterScreen({
     return `cave-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }, []);
 
+  const stageEntrance = useEntrance([cave.id]);
+  const bob = useIdleBob(9, 1500);
+  const { flash, trigger: triggerFlash } = useHitFlash();
+  const { progress: strikeProgress, trigger: triggerStrike } = useStrike();
+  const defeatAnim = useRef(new Animated.Value(0)).current;
+
+  const defeated = phase === "resolved" && Boolean(result?.defeated);
+
   async function resolveEncounter() {
     setPhase("resolving");
     setError(null);
+    defeatAnim.setValue(0);
+    triggerStrike();
+    const flashTimer = setTimeout(() => triggerFlash(), 140);
 
     try {
       const beam = await withTimeout(
@@ -58,6 +73,13 @@ export function CaveEncounterScreen({
 
       setResult(response);
       if (response.success) {
+        if (response.defeated) {
+          Animated.timing(defeatAnim, {
+            toValue: 1,
+            duration: 520,
+            useNativeDriver: false,
+          }).start();
+        }
         onComplete(response);
       } else {
         setError(response.error || "Boss encounter failed.");
@@ -65,14 +87,17 @@ export function CaveEncounterScreen({
     } catch (resolveError) {
       setError(toUserFacingError(resolveError));
     } finally {
+      clearTimeout(flashTimer);
       setPhase("resolved");
     }
   }
 
-  const lootText =
-    result?.loot.length
-      ? result.loot.map((loot) => `${loot.quantity}x ${labelFromContentId(loot.itemContentId)}`).join(", ")
-      : "No loot revealed yet";
+  const stageStyle = {
+    opacity: stageEntrance,
+    transform: [
+      { scale: stageEntrance.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) },
+    ],
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.page}>
@@ -85,14 +110,35 @@ export function CaveEncounterScreen({
       </View>
 
       <View style={styles.scene}>
-        <View style={styles.caveStage}>
+        <Animated.View style={[styles.caveStage, stageStyle]}>
           <View style={styles.caveMouth}>
-            <View style={styles.bossSilhouette}>
-              <Text style={styles.bossInitial}>{(boss?.displayName ?? "?").charAt(0)}</Text>
-            </View>
+            <BossSprite
+              spriteKey={boss?.spriteKey}
+              bossId={boss?.id}
+              tier={boss?.tier ?? cave.tier}
+              bob={defeated ? undefined : bob}
+              flash={flash}
+              defeat={defeatAnim}
+            />
+
+            <Animated.View
+              pointerEvents="none"
+              style={[
+                styles.strikeWeapon,
+                {
+                  opacity: strikeProgress,
+                  transform: [
+                    { translateX: strikeProgress.interpolate({ inputRange: [0, 1], outputRange: [-60, 90] }) },
+                    { rotate: strikeProgress.interpolate({ inputRange: [0, 1], outputRange: ["-25deg", "40deg"] }) },
+                  ],
+                },
+              ]}
+            >
+              <WeaponIcon weaponId={session.merchantState.equippedWeaponId} size={70} />
+            </Animated.View>
           </View>
           <View style={styles.ground} />
-        </View>
+        </Animated.View>
 
         <View style={styles.panel}>
           <Text style={styles.kicker}>{cave.displayName}</Text>
@@ -113,7 +159,22 @@ export function CaveEncounterScreen({
               <Text style={styles.resultTitle}>{result.defeated ? "Boss Defeated" : "Encounter Complete"}</Text>
               <Text style={styles.resultLine}>Game XP +{result.gameXpAwarded}</Text>
               <Text style={styles.resultLine}>Arena XP +{result.arenaXpAwarded}</Text>
-              <Text style={styles.resultLine}>Loot: {lootText}</Text>
+              {result.loot.length > 0 ? (
+                <View style={styles.lootList}>
+                  {result.loot.map((loot, index) => (
+                    <LootCard
+                      key={loot.itemContentId}
+                      name={labelFromContentId(loot.itemContentId)}
+                      rarity=""
+                      quantity={loot.quantity}
+                      revealIndex={index}
+                      revealKey={result.eventId}
+                    />
+                  ))}
+                </View>
+              ) : (
+                <Text style={styles.resultLine}>No loot revealed yet</Text>
+              )}
               {result.arenaProgress.duplicateEvent ? (
                 <Text style={styles.duplicateText}>Duplicate session detected: no extra XP awarded.</Text>
               ) : null}
