@@ -1,0 +1,206 @@
+{
+  "properties": {
+    "anchorTimeUTC": {
+      "data": "2020-01-01T12:00:00Z"
+    },
+    "ChampionColor": {
+      "data": {
+        "a": 1,
+        "b": 0,
+        "g": 0.709803939,
+        "r": 0.968627453
+      }
+    },
+    "cycleDuration": {
+      "data": "P1D"
+    },
+    "DefaultEntryColor": {
+      "data": {
+        "a": 1,
+        "b": 0,
+        "g": 0,
+        "r": 0.623529434
+      }
+    },
+    "groupRewards": {
+      "data": {
+        "rankRewards": []
+      }
+    },
+    "name": {
+      "data": "Demo Tournament"
+    },
+    "playerLimit": {
+      "data": 25
+    },
+    "rankRewards": {
+      "data": [
+        {
+          "currencyRewards": [
+            {
+              "amount": 1000,
+              "symbol": "currency.gems"
+            }
+          ],
+          "maxRank": 1,
+          "minRank": 1,
+          "name": "Winner",
+          "stageMax": 1,
+          "stageMin": 1,
+          "tier": 0
+        },
+        {
+          "currencyRewards": [
+            {
+              "amount": 20,
+              "symbol": "currency.gems"
+            }
+          ],
+          "name": "Bronze Participation",
+          "tier": 0
+        },
+        {
+          "currencyRewards": [
+            {
+              "amount": 50,
+              "symbol": "currency.gems"
+            }
+          ],
+          "name": "Silver Participation",
+          "tier": 1
+        },
+        {
+          "currencyRewards": [
+            {
+              "amount": 80,
+              "symbol": "currency.gems"
+            }
+          ],
+          "name": "Gold Participation",
+          "tier": 2
+        }
+      ]
+    },
+    "scoreRewards": {
+      "data": [
+        {
+          "currencyRewards": [],
+          "maxScore": 1,
+          "minScore": 1,
+          "name": "Winner Score",
+          "stageMax": 1,
+          "stageMin": 1,
+          "tier": 0
+        }
+      ]
+    },
+    "stageChanges": {
+      "data": [
+        {
+          "color": {
+            "a": 1,
+            "b": 0,
+            "g": 0.709803939,
+            "r": 0.968627453
+          },
+          "delta": 2,
+          "maxRank": 1,
+          "minRank": 1
+        },
+        {
+          "color": {
+            "a": 1,
+            "b": 0.7921569,
+            "g": 0.7921569,
+            "r": 0.7921569
+          },
+          "delta": 2,
+          "maxRank": 2,
+          "minRank": 2
+        },
+        {
+          "color": {
+            "a": 1,
+            "b": 0.160784319,
+            "g": 0.333333343,
+            "r": 0.721568644
+          },
+          "delta": 2,
+          "maxRank": 3,
+          "minRank": 3
+        },
+        {
+          "color": {
+            "a": 0,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "delta": 1,
+          "maxRank": 10,
+          "minRank": 4
+        },
+        {
+          "color": {
+            "a": 1,
+            "b": 0.6901961,
+            "g": 0.6901961,
+            "r": 0.6901961
+          },
+          "delta": 0,
+          "maxRank": 20,
+          "minRank": 11
+        },
+        {
+          "color": {
+            "a": 1,
+            "b": 0,
+            "g": 0,
+            "r": 0.623529434
+          },
+          "delta": -1,
+          "maxRank": 50,
+          "minRank": 41
+        }
+      ]
+    },
+    "stagesPerTier": {
+      "data": 3
+    },
+    "tiers": {
+      "data": [
+        {
+          "color": {
+            "a": 1,
+            "b": 0.160784319,
+            "g": 0.333333343,
+            "r": 0.721568644
+          },
+          "name": "Bronze"
+        },
+        {
+          "color": {
+            "a": 1,
+            "b": 0.7921569,
+            "g": 0.7921569,
+            "r": 0.7921569
+          },
+          "name": "Silver"
+        },
+        {
+          "color": {
+            "a": 1,
+            "b": 0,
+            "g": 0.709803939,
+            "r": 0.968627453
+          },
+          "name": "Gold"
+        }
+      ]
+    }
+  },
+  "tags": [
+    "base"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

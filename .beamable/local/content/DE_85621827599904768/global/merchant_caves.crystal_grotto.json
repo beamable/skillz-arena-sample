@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "backgroundKey": {
+      "data": "cave_crystal"
+    },
+    "bossId": {
+      "data": "merchant_bosses.glass_wyrm"
+    },
+    "displayName": {
+      "data": "Crystal Grotto"
+    },
+    "requiredGameLevel": {
+      "data": 2
+    },
+    "tier": {
+      "data": 2
+    }
+  },
+  "tags": [
+    "merchant",
+    "cave",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

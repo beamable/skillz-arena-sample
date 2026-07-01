@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Moonsteel Cutlass"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "power": {
+      "data": 2
+    },
+    "tier": {
+      "data": 2
+    }
+  },
+  "tags": [
+    "merchant",
+    "weapon",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

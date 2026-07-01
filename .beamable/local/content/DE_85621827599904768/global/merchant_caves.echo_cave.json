@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "backgroundKey": {
+      "data": "cave_echo"
+    },
+    "bossId": {
+      "data": "merchant_bosses.mossback_ogre"
+    },
+    "displayName": {
+      "data": "Echo Cave"
+    },
+    "requiredGameLevel": {
+      "data": 1
+    },
+    "tier": {
+      "data": 1
+    }
+  },
+  "tags": [
+    "merchant",
+    "cave",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

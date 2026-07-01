@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Starter Blade"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "power": {
+      "data": 1
+    },
+    "tier": {
+      "data": 1
+    }
+  },
+  "tags": [
+    "merchant",
+    "weapon",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

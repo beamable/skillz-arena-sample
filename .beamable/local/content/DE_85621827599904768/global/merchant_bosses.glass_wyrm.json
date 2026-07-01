@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "arenaXpOnDefeat": {
+      "data": 18
+    },
+    "baseGameXp": {
+      "data": 65
+    },
+    "displayName": {
+      "data": "Glass Wyrm"
+    },
+    "dropTableId": {
+      "data": "merchant_drop_tables.glass_wyrm"
+    },
+    "spriteKey": {
+      "data": "boss_glass_wyrm"
+    },
+    "tier": {
+      "data": 2
+    }
+  },
+  "tags": [
+    "merchant",
+    "boss",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

@@ -1,0 +1,34 @@
+{
+  "properties": {
+    "arenaXpOnSell": {
+      "data": 15
+    },
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Starforged Core"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "rarity": {
+      "data": "exotic"
+    },
+    "sellPrice": {
+      "data": 120
+    }
+  },
+  "tags": [
+    "merchant",
+    "loot",
+    "exotic",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "entries": {
+      "data": [
+        {
+          "itemContentId": "items.loot.glowcap_ore",
+          "maxQuantity": 3,
+          "minQuantity": 1,
+          "weight": 75
+        },
+        {
+          "itemContentId": "items.loot.siren_glass",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "weight": 25
+        }
+      ]
+    }
+  },
+  "tags": [
+    "merchant",
+    "drop_table",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

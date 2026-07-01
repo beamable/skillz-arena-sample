@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "leaderboardUpdates": {
+      "data": []
+    },
+    "numericRules": {
+      "data": []
+    },
+    "rewards": {
+      "data": []
+    },
+    "stringRules": {
+      "data": []
+    },
+    "teams": {
+      "data": [
+        {
+          "maxPlayers": 10,
+          "name": "TeamName"
+        }
+      ]
+    }
+  },
+  "tags": [
+    "base"
+  ],
+  "referenceManifestId": "6a43c94714b76572c604ea07"
+}

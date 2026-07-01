@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "entries": {
+      "data": [
+        {
+          "itemContentId": "items.loot.siren_glass",
+          "maxQuantity": 2,
+          "minQuantity": 1,
+          "weight": 35
+        },
+        {
+          "itemContentId": "items.loot.phoenix_ember",
+          "maxQuantity": 2,
+          "minQuantity": 1,
+          "weight": 45
+        },
+        {
+          "itemContentId": "items.loot.starforged_core",
+          "maxQuantity": 1,
+          "minQuantity": 1,
+          "weight": 20
+        }
+      ]
+    }
+  },
+  "tags": [
+    "merchant",
+    "drop_table",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

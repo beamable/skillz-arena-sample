@@ -1,0 +1,34 @@
+{
+  "properties": {
+    "arenaXpOnSell": {
+      "data": 0
+    },
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Glowcap Ore"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "rarity": {
+      "data": "common"
+    },
+    "sellPrice": {
+      "data": 8
+    }
+  },
+  "tags": [
+    "merchant",
+    "loot",
+    "common",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

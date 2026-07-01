@@ -53,7 +53,10 @@ appsettings.Development.json
 !.beamable/config.beam.json
 !.beamable/additional-project-paths.json
 !.beamable/project-paths-to-ignore.json
-.beamable/local/
+# NOTE: .beamable/local is intentionally tracked for this sample so its content set ships
+# with the repo (see README "Beamable Local Content"). In production, keep it gitignored.
+# Auth tokens and CLI logs live under .beamable/temp and stay ignored via the rule above.
+!.beamable/local/
 beamable.local.json
 
 # Moe private repo memory

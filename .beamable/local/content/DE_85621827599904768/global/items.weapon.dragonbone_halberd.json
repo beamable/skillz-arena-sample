@@ -1,0 +1,30 @@
+{
+  "properties": {
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Dragonbone Halberd"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "power": {
+      "data": 4
+    },
+    "tier": {
+      "data": 3
+    }
+  },
+  "tags": [
+    "merchant",
+    "weapon",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

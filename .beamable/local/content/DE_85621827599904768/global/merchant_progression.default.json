@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "gameXpThresholds": {
+      "data": [
+        0,
+        100,
+        260,
+        520,
+        900
+      ]
+    },
+    "startingWeaponId": {
+      "data": "items.weapon.starter_blade"
+    }
+  },
+  "tags": [
+    "merchant",
+    "progression",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

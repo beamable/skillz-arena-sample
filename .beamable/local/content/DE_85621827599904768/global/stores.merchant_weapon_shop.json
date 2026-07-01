@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "listings": {
+      "links": [
+        "listings.weapon.moonsteel_cutlass",
+        "listings.weapon.dragonbone_halberd"
+      ]
+    },
+    "showInactiveListings": {
+      "data": false
+    },
+    "title": {
+      "data": "Merchant Weapon Shop"
+    }
+  },
+  "tags": [
+    "merchant",
+    "shop",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

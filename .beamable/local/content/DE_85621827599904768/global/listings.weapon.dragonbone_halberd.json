@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "offer": {
+      "data": {
+        "obtainCurrency": [],
+        "obtainItems": [
+          {
+            "contentId": "items.weapon.dragonbone_halberd",
+            "properties": []
+          }
+        ]
+      }
+    },
+    "price": {
+      "data": {
+        "amount": 480,
+        "symbol": "currency.gold",
+        "type": "currency"
+      }
+    }
+  },
+  "tags": [
+    "merchant",
+    "shop",
+    "weapon",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

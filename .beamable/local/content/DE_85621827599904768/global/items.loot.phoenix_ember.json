@@ -1,0 +1,34 @@
+{
+  "properties": {
+    "arenaXpOnSell": {
+      "data": 5
+    },
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Phoenix Ember"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "rarity": {
+      "data": "rare"
+    },
+    "sellPrice": {
+      "data": 45
+    }
+  },
+  "tags": [
+    "merchant",
+    "loot",
+    "rare",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

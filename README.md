@@ -188,3 +188,59 @@ src/generated/arena/beamable
 Generated files should then be treated as generated code and not manually edited.
 
 Whenever a C# microservice callable, DTO, or service contract changes, regenerate the relevant web client before compiling the React Native app.
+
+## Beamable Local Content (`.beamable/local`)
+
+### Why this folder is tracked here (and what to do in production)
+
+Beamable caches your local content workspace under `.beamable/local/content/<PID>/<manifest>/…`. By default — and as the recommended practice for real projects — this folder is **gitignored**, because content is realm-specific working state that is normally owned and edited through the Beamable Portal / your own content pipeline, with your realm as the source of truth.
+
+For this sample we intentionally **un-ignore `.beamable/local`** so the exact content set the prototype depends on ships with the repo: caves, bosses, drop tables, loot, weapons, the weapon store/listings, progression, and `currency.gold` on the game realm, plus the Arena-side currencies, leaderboards, tournaments, and game types. That lets you clone and publish it straight to your own realm instead of recreating every content object by hand.
+
+What stays ignored even here (never commit these):
+
+- `.beamable/temp/**` — CLI auth token (`auth.beam.json`) and logs.
+- `beamable.local.json` — local machine state that can hold secrets.
+
+Production recommendation: keep `.beamable/local` gitignored in production projects and manage content through the Portal / your content workflow. Treat committing content into source control as a sample-only convenience, not a pattern to copy into a shipping game.
+
+### Publishing this content to your realm
+
+Local content is cached per realm under `.beamable/local/content/<PID>/global`. This repo ships two PID folders from the sample's realms:
+
+- Game PID `DE_85621827599904768` — merchant game content (`merchant_*`, `items.loot.*`, `items.weapon.*`, `stores.*`, `listings.*`, `currency.gold`).
+- Arena PID `DE_85621805437202432` — Arena-side content (currencies, leaderboards, tournaments, game types).
+
+From the repo root (PowerShell):
+
+```powershell
+# 1. Restore the Beam CLI (it is a local dotnet tool)
+dotnet tool restore
+
+# 2. Log in and point the CLI at YOUR org + realm
+dotnet tool run beam -- init
+
+# 3. Confirm the CLI is targeting the realm/PID you expect
+dotnet tool run beam -- config -q --raw
+
+# 4. (optional) Preview the local content the CLI sees before publishing
+dotnet tool run beam -- content ps
+
+# 5. Publish the local 'global' manifest to that realm
+dotnet tool run beam -- content publish
+```
+
+Because the local cache is keyed by PID, `content publish` publishes the content stored under the **currently targeted** realm's PID folder:
+
+- If you work in the sample's realms (same CID/PIDs), the committed folders already match — step 5 publishes directly.
+- If you use your **own** realm (a different PID), copy the shipped content into your realm's folder first, then publish. For the game realm:
+
+  ```powershell
+  # replace <YOUR_GAME_PID> with your realm's game PID
+  New-Item -ItemType Directory -Force ".beamable/local/content/<YOUR_GAME_PID>/global" | Out-Null
+  Copy-Item ".beamable/local/content/DE_85621827599904768/global/*" ".beamable/local/content/<YOUR_GAME_PID>/global/" -Recurse -Force
+  ```
+
+  Repeat with the Arena PID folder if you run a separate Arena realm, then run steps 3–5 with the CLI targeting that realm.
+
+Finally, point the web client at the realm you published to by setting the matching CID/PIDs in `.env.local` (see "Create local public client env" above).

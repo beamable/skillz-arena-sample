@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "backgroundKey": {
+      "data": "cave_dragon"
+    },
+    "bossId": {
+      "data": "merchant_bosses.ancient_drake"
+    },
+    "displayName": {
+      "data": "Dragon Vault"
+    },
+    "requiredGameLevel": {
+      "data": 4
+    },
+    "tier": {
+      "data": 3
+    }
+  },
+  "tags": [
+    "merchant",
+    "cave",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}

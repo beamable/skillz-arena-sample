@@ -1,0 +1,34 @@
+{
+  "properties": {
+    "arenaXpOnSell": {
+      "data": 0
+    },
+    "clientPermission": {
+      "data": {
+        "write_self": false
+      }
+    },
+    "displayName": {
+      "data": "Siren Glass"
+    },
+    "icon": {
+      "data": {
+        "referenceKey": "",
+        "subObjectName": ""
+      }
+    },
+    "rarity": {
+      "data": "uncommon"
+    },
+    "sellPrice": {
+      "data": 18
+    }
+  },
+  "tags": [
+    "merchant",
+    "loot",
+    "uncommon",
+    "phase2"
+  ],
+  "referenceManifestId": "6a43c9777f1378241e92faf0"
+}
